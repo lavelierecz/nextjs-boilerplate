@@ -2,34 +2,51 @@
 
 import { useState } from "react";
 
+type Message = {
+  role: "user" | "assistant";
+  content: string;
+};
+
 export default function Page() {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<
-    { role: "user" | "assistant"; content: string }[]
-  >([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-const userMessage = {
-  role: "user" as const,
-  content: input,
-};
+    const userMessage: Message = {
+      role: "user",
+      content: input,
+    };
+
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: input }),
-    });
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    ssetMessages((prev) => [
-  ...prev,
-  { role: "assistant" as const, content: data.reply },
-]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: data.reply,
+        },
+      ]);
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Došlo k chybě, zkus to prosím znovu.",
+        },
+      ]);
+    }
   };
 
   return (
@@ -52,7 +69,7 @@ const userMessage = {
 
         <div className="flex gap-2">
           <input
-            className="flex-1 border rounded-lg px-4 py-2"
+            className="flex-1 border rounded-lg px-4 py-2 text-black placeholder-gray-400"
             placeholder="Napiš svůj problém s pletí..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
