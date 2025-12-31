@@ -31,10 +31,6 @@ export default function Page() {
 
       const data = await res.json();
 
-      if (!data.reply) {
-        throw new Error("No response");
-      }
-
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.reply },
@@ -44,10 +40,16 @@ export default function Page() {
         ...prev,
         {
           role: "assistant",
-          content:
-            "Omlouvám se, došlo k technické chybě. Zkuste to prosím znovu.",
+          content: "Došlo k chybě, zkuste to prosím znovu.",
         },
       ]);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
     }
   };
 
@@ -57,7 +59,7 @@ export default function Page() {
         Objev svou rutinu
       </h1>
 
-      <div className="w-full max-w-xl bg-white rounded-xl shadow-lg p-6 space-y-4">
+      <div className="w-full max-w-xl bg-white rounded-xl shadow p-6 space-y-4">
         {messages.map((msg, i) => (
           <div
             key={i}
@@ -71,20 +73,21 @@ export default function Page() {
           </div>
         ))}
 
-        <div className="flex gap-2">
-          <input
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-black focus:outline-none"
-            placeholder="Napiš svůj problém s pletí..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <button
-            onClick={sendMessage}
-            className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
-          >
-            Odeslat
-          </button>
-        </div>
+        <textarea
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-black resize-none"
+          placeholder="Napiš svůj problém s pletí..."
+          rows={2}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+
+        <button
+          onClick={sendMessage}
+          className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition"
+        >
+          Odeslat
+        </button>
       </div>
     </main>
   );
