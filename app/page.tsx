@@ -10,6 +10,7 @@ type Message = {
 export default function Page() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -21,6 +22,7 @@ export default function Page() {
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    setIsTyping(true);
 
     try {
       const res = await fetch("/api/chat", {
@@ -43,13 +45,8 @@ export default function Page() {
           content: "Došlo k chybě, zkuste to prosím znovu.",
         },
       ]);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
+    } finally {
+      setIsTyping(false);
     }
   };
 
@@ -73,21 +70,33 @@ export default function Page() {
           </div>
         ))}
 
-        <textarea
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-black resize-none"
-          placeholder="Napiš svůj problém s pletí..."
-          rows={2}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
+        {isTyping && (
+          <div className="text-gray-500 italic animate-pulse">
+            AI píše…
+          </div>
+        )}
 
-        <button
-          onClick={sendMessage}
-          className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition"
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            sendMessage();
+          }}
+          className="flex gap-2"
         >
-          Odeslat
-        </button>
+          <textarea
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-black resize-none"
+            placeholder="Napiš svůj problém s pletí..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            rows={2}
+          />
+          <button
+            type="submit"
+            className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
+          >
+            Odeslat
+          </button>
+        </form>
       </div>
     </main>
   );
