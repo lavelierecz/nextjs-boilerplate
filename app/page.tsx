@@ -11,7 +11,10 @@ export default function Page() {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMessage = { role: "user", content: input };
+const userMessage = {
+  role: "user" as const,
+  content: input,
+};
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
