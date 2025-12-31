@@ -42,7 +42,7 @@ export default function Page() {
         ...prev,
         {
           role: "assistant",
-          content: "Omlouváme se, došlo k chybě. Zkuste to znovu.",
+          content: "Omlouváme se, došlo k technické chybě. Zkuste to prosím znovu.",
         },
       ]);
     } finally {
@@ -56,7 +56,7 @@ export default function Page() {
         Objev svou rutinu
       </h1>
 
-      <div className="w-full max-w-xl bg-white rounded-xl shadow p-6 space-y-4">
+      <div className="w-full max-w-xl bg-white border border-black/20 rounded-xl shadow-sm p-6 space-y-4">
         {messages.map((msg, i) => (
           <div
             key={i}
@@ -77,7 +77,7 @@ export default function Page() {
         )}
 
         <textarea
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-black resize-none"
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-black resize-none focus:outline-none focus:ring-1 focus:ring-black"
           placeholder="Napiš svůj problém s pletí..."
           rows={2}
           value={input}
@@ -92,7 +92,7 @@ export default function Page() {
 
         <button
           onClick={sendMessage}
-          className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800"
+          className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition"
         >
           Odeslat
         </button>
