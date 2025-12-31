@@ -8,10 +8,10 @@ export async function POST(req) {
     const message = body.message;
 
     if (!message) {
-      return new Response(
-        JSON.stringify({ error: "No message provided" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "No message provided" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const openai = new OpenAI({
@@ -38,7 +38,6 @@ export async function POST(req) {
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (err) {
-    console.error("API ERROR:", err);
     return new Response(
       JSON.stringify({ error: "Došlo k chybě při zpracování požadavku." }),
       { status: 500 }
