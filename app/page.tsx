@@ -31,36 +31,40 @@ export default function Page() {
 
       const data = await res.json();
 
+      if (!data.reply) {
+        throw new Error("No response");
+      }
+
       setMessages((prev) => [
         ...prev,
-        {
-          role: "assistant",
-          content: data.reply,
-        },
+        { role: "assistant", content: data.reply },
       ]);
     } catch (err) {
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "Došlo k chybě, zkus to prosím znovu.",
+          content:
+            "Omlouvám se, došlo k technické chybě. Zkuste to prosím znovu.",
         },
       ]);
     }
   };
 
   return (
-    <main className="min-h-screen bg-[#f8f8f8] flex flex-col items-center py-16 px-4">
-      <h1 className="text-4xl font-serif mb-6">Objev svou rutinu</h1>
+    <main className="min-h-screen bg-[#f7f7f7] flex flex-col items-center py-16 px-4">
+      <h1 className="text-4xl font-serif mb-6 text-gray-900">
+        Objev svou rutinu
+      </h1>
 
-      <div className="w-full max-w-xl bg-white rounded-xl shadow p-6 space-y-4">
+      <div className="w-full max-w-xl bg-white rounded-xl shadow-lg p-6 space-y-4">
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`p-3 rounded-lg ${
+            className={`p-3 rounded-lg text-sm ${
               msg.role === "user"
-                ? "bg-gray-100 text-right"
-                : "bg-gray-200 text-left"
+                ? "bg-gray-100 text-gray-900 text-right"
+                : "bg-gray-200 text-gray-900 text-left"
             }`}
           >
             {msg.content}
@@ -69,14 +73,14 @@ export default function Page() {
 
         <div className="flex gap-2">
           <input
-            className="flex-1 border rounded-lg px-4 py-2 text-black placeholder-gray-400"
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-black focus:outline-none"
             placeholder="Napiš svůj problém s pletí..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
           <button
             onClick={sendMessage}
-            className="bg-black text-white px-4 py-2 rounded-lg"
+            className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
           >
             Odeslat
           </button>
