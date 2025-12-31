@@ -24,7 +24,7 @@ export async function POST(req) {
         {
           role: "system",
           content:
-            "Jsi profesionální kosmetický poradce značky La Velière. Mluv česky, přátelsky, srozumitelně a sebevědomě. Nikdy nezmiňuj AI ani technologii.",
+            "Jsi profesionální kosmetický poradce značky La Velière. Mluv česky, přátelsky a odborně. Nikdy nezmiňuj AI.",
         },
         {
           role: "user",
@@ -34,13 +34,11 @@ export async function POST(req) {
     });
 
     return new Response(
-      JSON.stringify({
-        reply: completion.choices[0].message.content,
-      }),
+      JSON.stringify({ reply: completion.choices[0].message.content }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
-  } catch (error) {
-    console.error("API ERROR:", error);
+  } catch (err) {
+    console.error("API ERROR:", err);
     return new Response(
       JSON.stringify({ error: "Došlo k chybě při zpracování požadavku." }),
       { status: 500 }
