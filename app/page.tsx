@@ -26,10 +26,10 @@ const userMessage = {
 
     const data = await res.json();
 
-    setMessages((prev) => [
-      ...prev,
-      { role: "assistant", content: data.reply },
-    ]);
+    ssetMessages((prev) => [
+  ...prev,
+  { role: "assistant" as const, content: data.reply },
+]);
   };
 
   return (
