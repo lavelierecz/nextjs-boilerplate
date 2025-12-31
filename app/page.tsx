@@ -1,48 +1,42 @@
+"use client";
+import { useState } from "react";
+
 export default function Page() {
+  const [input, setInput] = useState("");
+  const [response, setResponse] = useState("");
+
+  const sendMessage = async () => {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: input }),
+    });
+
+    const data = await res.json();
+    setResponse(data.reply);
+  };
+
   return (
-    <main style={{
-      minHeight: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      background: "#fff",
-      fontFamily: "system-ui"
-    }}>
-      <div style={{ maxWidth: 480, width: "100%", padding: 24 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 600 }}>
-          La Velière – Skin Routine Assistant
-        </h1>
+    <main style={{ padding: 40, maxWidth: 600, margin: "0 auto" }}>
+      <h1>La Velière – Skin Assistant</h1>
 
-        <p style={{ marginTop: 12, color: "#444" }}>
-          Ahoj 👋  
-          Pomohu ti sestavit ideální skincare rutinu.
-        </p>
+      <textarea
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Popiš mi svou pleť..."
+        style={{ width: "100%", minHeight: 100 }}
+      />
 
-        <input
-          placeholder="Napiš mi, co řešíš (pleť, akné, citlivost...)"
-          style={{
-            width: "100%",
-            marginTop: 20,
-            padding: 12,
-            borderRadius: 8,
-            border: "1px solid #ccc"
-          }}
-        />
+      <button onClick={sendMessage} style={{ marginTop: 10 }}>
+        Zeptat se
+      </button>
 
-        <button
-          style={{
-            marginTop: 12,
-            width: "100%",
-            padding: 12,
-            background: "black",
-            color: "white",
-            borderRadius: 8,
-            cursor: "pointer"
-          }}
-        >
-          Pokračovat
-        </button>
-      </div>
+      {response && (
+        <div style={{ marginTop: 20, whiteSpace: "pre-wrap" }}>
+          <strong>Odpověď:</strong>
+          <p>{response}</p>
+        </div>
+      )}
     </main>
   );
 }
