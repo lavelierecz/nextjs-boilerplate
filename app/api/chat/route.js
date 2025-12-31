@@ -2,7 +2,7 @@ export const runtime = "nodejs";
 
 import OpenAI from "openai";
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const body = await req.json();
     const message = body.message;
@@ -15,7 +15,7 @@ export async function POST(req) {
     }
 
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: process.env.OPENAI_API_KEY!,
     });
 
     const completion = await openai.chat.completions.create({
@@ -23,26 +23,24 @@ export async function POST(req) {
       messages: [
         {
           role: "system",
-          content: `
-You are a professional skincare consultant for the brand La Velière.
-Speak Czech, calmly, respectfully, with expertise.
-Guide the user through skincare questions and offer helpful responses.
-Never mention AI, technology, or diagnoses.
-          `,
+          content:
+            "Jsi profesionální kosmetický poradce značky La Velière. Mluv česky, přátelsky a odborně. Nikdy nezmiňuj AI.",
         },
-        { role: "user", content: message },
+        {
+          role: "user",
+          content: message,
+        },
       ],
     });
 
-    const reply = completion.choices[0].message.content;
-
-    return new Response(JSON.stringify({ reply }), {
+    return new Response(JSON.stringify({ reply: completion.choices[0].message.content }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
+    console.error("API ERROR:", err);
     return new Response(
-      JSON.stringify({ error: "Server error", details: err.message }),
+      JSON.stringify({ error: "Došlo k chybě při zpracování dotazu." }),
       { status: 500 }
     );
   }
